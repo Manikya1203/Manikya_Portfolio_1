@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manikya Pasi · Data Analyst</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@200;300;400;500;600&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet">
+<style>
+:root{--peach:#FFF0E6;--peach-mid:#FFE0C8;--peach-deep:#F4C4A0;--orange:#E8653A;--orange-light:#F4A26B;--orange-dim:#C4502A;--purple:#9B7FFF;--purple-light:#C4AAFF;--purple-deep:#6C47CC;--pink:#FF6EC7;--gold:#FFD166;--dark:#1A0F0A;--dark-2:#241510;--text:#2D1810;--text-mid:#6B4535;--text-muted:#A07060;--white:#FFFAF6;--ff-d:'Syne',sans-serif;--ff-b:'Plus Jakarta Sans',sans-serif;--ff-m:'DM Mono',monospace;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{background:var(--peach);color:var(--text);font-family:var(--ff-b);font-size:16px;line-height:1.7;overflow-x:hidden;cursor:none;}
+.cursor{position:fixed;width:12px;height:12px;background:var(--orange);border-radius:50%;pointer-events:none;z-index:99999;transform:translate(-50%,-50%);transition:width .2s,height .2s,background .2s;mix-blend-mode:multiply;}
+.cursor-ring{position:fixed;width:36px;height:36px;border:1.5px solid var(--orange);border-radius:50%;pointer-events:none;z-index:99998;transform:translate(-50%,-50%);transition:all .12s ease-out;opacity:.5;}
+@media(hover:none){.cursor,.cursor-ring{display:none;}body{cursor:auto;}}
+::-webkit-scrollbar{width:3px;}::-webkit-scrollbar-track{background:var(--peach);}::-webkit-scrollbar-thumb{background:var(--orange-light);border-radius:2px;}
+#progress{position:fixed;top:0;left:0;height:3px;background:linear-gradient(90deg,var(--purple),var(--pink),var(--gold));z-index:10001;width:0;}
+#loader{position:fixed;inset:0;background:var(--dark);z-index:10000;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;transition:opacity .8s,visibility .8s;}
+#loader.hidden{opacity:0;visibility:hidden;pointer-events:none;}
+.ld-name{font-family:var(--ff-d);font-size:clamp(28px,6vw,48px);font-weight:800;background:linear-gradient(90deg,var(--purple),var(--pink),var(--gold),var(--pink),var(--purple));background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:gw 2s linear infinite;letter-spacing:-.02em;}
+.ld-bar-w{width:180px;height:2px;background:rgba(255,255,255,.1);border-radius:2px;overflow:hidden;}
+.ld-bar{height:100%;background:linear-gradient(90deg,var(--purple),var(--pink));animation:ldf 1.8s ease-out forwards;}
+@keyframes ldf{from{width:0}to{width:100%}}
+.ld-txt{font-family:var(--ff-m);font-size:11px;color:rgba(255,255,255,.25);letter-spacing:.3em;text-transform:uppercase;}
+@keyframes gw{0%{background-position:0%}100%{background-position:300%}}
+#pt{position:fixed;inset:0;background:var(--dark);z-index:9999;pointer-events:none;opacity:0;transition:opacity .35s ease;}
+#pt.on{opacity:1;pointer-events:all;}
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;padding:20px 60px;display:flex;align-items:center;justify-content:space-between;transition:all .4s;}
+nav.sc{background:rgba(255,240,230,.92);backdrop-filter:blur(24px);border-bottom:.5px solid var(--peach-deep);padding:14px 60px;}
+.nav-logo{font-family:var(--ff-m);font-size:13px;color:var(--orange);text-decoration:none;letter-spacing:.1em;}
+.nav-links{display:flex;align-items:center;gap:30px;list-style:none;}
+.nav-links a{font-family:var(--ff-m);font-size:11px;color:var(--text-muted);text-decoration:none;letter-spacing:.18em;text-transform:uppercase;transition:color .3s;position:relative;}
+.nav-links a::after{content:'';position:absolute;bottom:-3px;left:0;right:0;height:1px;background:var(--orange);transform:scaleX(0);transform-origin:left;transition:transform .3s;}
+.nav-links a:hover{color:var(--orange);}
+.nav-links a:hover::after{transform:scaleX(1);}
+.nav-cta{font-family:var(--ff-m)!important;font-size:11px!important;letter-spacing:.18em!important;text-transform:uppercase!important;color:var(--white)!important;background:var(--orange);padding:10px 22px;text-decoration:none!important;border-radius:2px;transition:all .3s!important;}
+.nav-cta:hover{background:var(--purple)!important;}
+.nav-cta::after{display:none!important;}
+.hb{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:4px;background:none;border:none;}
+.hb span{display:block;width:22px;height:1.5px;background:var(--text-mid);transition:all .3s;}
+.hb.op span:nth-child(1){transform:translateY(6.5px) rotate(45deg);}
+.hb.op span:nth-child(2){opacity:0;}
+.hb.op span:nth-child(3){transform:translateY(-6.5px) rotate(-45deg);}
+.mob-nav{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(255,240,230,.97);backdrop-filter:blur(24px);z-index:999;flex-direction:column;align-items:center;justify-content:center;gap:28px;opacity:0;transform:translateY(-20px);transition:all .4s;}
+.mob-nav.op{opacity:1;transform:translateY(0);}
+.mob-nav a{font-family:var(--ff-d);font-size:26px;font-weight:700;color:var(--text);text-decoration:none;transition:color .3s;}
+.mob-nav a:hover{color:var(--orange);}
+.mob-cta{font-family:var(--ff-m)!important;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--white)!important;background:var(--orange);padding:13px 32px;border-radius:2px;margin-top:10px;}
+#home{min-height:100vh;padding:0 60px;display:grid;grid-template-columns:1fr 1fr;align-items:center;position:relative;overflow:hidden;}
+#home::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 50%,rgba(155,127,255,.12) 0%,transparent 50%),radial-gradient(ellipse at 80% 20%,rgba(248,162,107,.15) 0%,transparent 50%),radial-gradient(ellipse at 60% 80%,rgba(255,110,199,.08) 0%,transparent 50%);pointer-events:none;}
+#hc{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+.hl{position:relative;z-index:2;padding:130px 0 80px;}
+.h-status{display:inline-flex;align-items:center;gap:10px;background:rgba(232,101,58,.08);border:.5px solid rgba(232,101,58,.2);border-radius:100px;padding:8px 18px;margin-bottom:28px;animation:fu .8s ease .2s both;}
+.s-dot{width:7px;height:7px;border-radius:50%;background:var(--orange);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(232,101,58,.4)}50%{box-shadow:0 0 0 6px rgba(232,101,58,0)}}
+.s-txt{font-family:var(--ff-m);font-size:11px;color:var(--orange);letter-spacing:.15em;text-transform:uppercase;}
+.h-greet{font-family:var(--ff-b);font-size:18px;font-weight:300;color:var(--text-muted);margin-bottom:6px;animation:fu .8s ease .4s both;}
+.h-name{font-family:var(--ff-d);font-size:clamp(44px,6.5vw,88px);font-weight:800;line-height:.95;letter-spacing:-.03em;background:linear-gradient(90deg,var(--purple),var(--pink),var(--gold),var(--pink),var(--purple));background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:gw 3s linear infinite,fu .8s ease .5s both;margin-bottom:14px;}
+.h-typing{font-family:var(--ff-m);font-size:clamp(12px,1.4vw,15px);color:var(--orange);letter-spacing:.08em;min-height:22px;margin-bottom:22px;animation:fu .8s ease .65s both;display:flex;align-items:center;}
+.tc{display:inline-block;width:2px;height:15px;background:var(--orange);margin-left:1px;animation:blink .7s step-end infinite;vertical-align:middle;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.h-bio{font-size:15px;color:var(--text-mid);line-height:1.85;max-width:440px;margin-bottom:38px;font-weight:300;animation:fu .8s ease .8s both;}
+.h-acts{display:flex;gap:11px;align-items:center;flex-wrap:wrap;margin-bottom:44px;animation:fu .8s ease .9s both;}
+.bp{display:inline-flex;align-items:center;gap:9px;font-family:var(--ff-m);font-size:11px;letter-spacing:.18em;text-transform:uppercase;padding:13px 26px;background:var(--orange);color:var(--white);text-decoration:none;border-radius:2px;transition:all .3s;position:relative;overflow:hidden;}
+.bp::before{content:'';position:absolute;inset:0;background:var(--purple);transform:translateX(-100%);transition:transform .4s;}
+.bp:hover::before{transform:translateX(0);}
+.bp span,.bp svg{position:relative;z-index:1;}
+.bs{display:inline-flex;align-items:center;gap:9px;font-family:var(--ff-m);font-size:11px;letter-spacing:.18em;text-transform:uppercase;padding:13px 26px;border:1px solid var(--peach-deep);color:var(--text-mid);text-decoration:none;border-radius:2px;transition:all .3s;background:rgba(255,255,255,.5);backdrop-filter:blur(8px);}
+.bs:hover{border-color:var(--purple);color:var(--purple);}
+.h-soc{display:flex;gap:11px;align-items:center;animation:fu .8s ease 1s both;}
+.soc-a{width:37px;height:37px;border:1px solid var(--peach-deep);border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;transition:all .3s;background:rgba(255,255,255,.5);}
+.soc-a svg{width:14px;height:14px;stroke:var(--text-muted);fill:none;transition:stroke .3s;}
+.soc-a:hover{border-color:var(--purple);background:rgba(155,127,255,.1);}
+.soc-a:hover svg{stroke:var(--purple);}
+.h-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--peach-deep);border:1px solid var(--peach-deep);border-radius:12px;overflow:hidden;animation:fu .8s ease 1.1s both;margin-top:32px;}
+.stat{background:rgba(255,255,255,.7);padding:16px 18px;text-align:center;backdrop-filter:blur(8px);}
+.sn{font-family:var(--ff-d);font-size:26px;font-weight:800;background:linear-gradient(135deg,var(--purple),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;line-height:1;}
+.sl{font-family:var(--ff-m);font-size:9px;color:var(--text-muted);letter-spacing:.15em;text-transform:uppercase;margin-top:3px;}
+.hr{display:flex;align-items:center;justify-content:center;position:relative;z-index:2;padding:130px 0 80px;animation:fu .8s ease .6s both;}
+#sc{border-radius:50%;cursor:grab;}
+#sc:active{cursor:grabbing;}
+.fb{position:absolute;font-family:var(--ff-m);font-size:10px;letter-spacing:.1em;padding:7px 14px;border-radius:100px;backdrop-filter:blur(12px);border:1px solid;white-space:nowrap;}
+.fb:nth-child(2){top:22%;right:-2%;background:rgba(155,127,255,.15);border-color:rgba(155,127,255,.3);color:var(--purple-deep);animation:bf 3s ease-in-out infinite;}
+.fb:nth-child(3){bottom:28%;left:-6%;background:rgba(232,101,58,.12);border-color:rgba(232,101,58,.25);color:var(--orange-dim);animation:bf 3.5s ease-in-out infinite 1s;}
+.fb:nth-child(4){bottom:14%;right:4%;background:rgba(255,110,199,.12);border-color:rgba(255,110,199,.25);color:#C44499;animation:bf 4s ease-in-out infinite .5s;}
+@keyframes bf{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes fu{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+section{padding:100px 60px;position:relative;}
+.rv{opacity:0;transform:translateY(36px);transition:opacity .9s ease,transform .9s ease;}
+.rv.vis{opacity:1;transform:translateY(0);}
+.rd1{transition-delay:.1s;}.rd2{transition-delay:.2s;}.rd3{transition-delay:.3s;}.rd4{transition-delay:.4s;}
+.ey{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.en{font-family:var(--ff-m);font-size:11px;color:var(--orange-light);letter-spacing:.2em;}
+.el{width:28px;height:1px;background:var(--peach-deep);}
+.et{font-family:var(--ff-m);font-size:11px;color:var(--text-muted);letter-spacing:.2em;text-transform:uppercase;}
+.sh{font-family:var(--ff-d);font-size:clamp(30px,4vw,58px);font-weight:800;line-height:1.0;letter-spacing:-.02em;color:var(--text);margin-bottom:13px;}
+.sh em{font-style:italic;background:linear-gradient(135deg,var(--purple),var(--pink));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.ss{font-size:15px;color:var(--text-muted);max-width:400px;line-height:1.8;font-weight:300;}
+#about{background:var(--dark);padding:80px 60px;overflow:hidden;}
+#about::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 30% 50%,rgba(155,127,255,.08) 0%,transparent 60%),radial-gradient(ellipse at 70% 50%,rgba(255,110,199,.05) 0%,transparent 60%);}
+.ag{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;position:relative;z-index:2;}
+.ah{font-family:var(--ff-d);font-size:clamp(28px,3.5vw,44px);font-weight:800;color:var(--white);line-height:1.05;letter-spacing:-.02em;margin-bottom:16px;}
+.ah em{font-style:italic;background:linear-gradient(90deg,var(--purple),var(--pink),var(--gold),var(--pink),var(--purple));background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:gw 3s linear infinite;}
+.ab-bio{font-size:15px;color:rgba(255,250,246,.55);line-height:1.85;font-weight:300;}
+.ac-list{display:flex;flex-direction:column;gap:14px;}
+.ac{background:rgba(255,255,255,.04);border:.5px solid rgba(255,255,255,.08);border-radius:12px;padding:20px 22px;display:flex;align-items:flex-start;gap:13px;transition:all .3s;}
+.ac:hover{background:rgba(155,127,255,.08);border-color:rgba(155,127,255,.2);transform:translateX(6px);}
+.ac-ic{width:40px;height:40px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:17px;}
+.ac-t{font-family:var(--ff-d);font-size:15px;font-weight:700;color:var(--white);margin-bottom:3px;}
+.ac-d{font-size:13px;color:rgba(255,250,246,.45);line-height:1.6;font-weight:300;}
+#projects{background:var(--peach);}
+.ph{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:end;margin-bottom:52px;}
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.pc{background:rgba(255,255,255,.75);border:1px solid var(--peach-deep);border-radius:20px;padding:34px 30px;position:relative;overflow:hidden;transition:all .4s;backdrop-filter:blur(12px);}
+.pc::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--purple),var(--pink));transform:scaleX(0);transform-origin:left;transition:transform .4s;border-radius:3px 3px 0 0;}
+.pc:hover{transform:translateY(-6px);box-shadow:0 24px 60px rgba(155,127,255,.15);border-color:rgba(155,127,255,.3);}
+.pc:hover::before{transform:scaleX(1);}
+.pb{display:inline-flex;align-items:center;gap:6px;font-family:var(--ff-m);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--purple-deep);background:rgba(155,127,255,.12);border:.5px solid rgba(155,127,255,.3);border-radius:100px;padding:4px 11px;margin-bottom:18px;}
+.pn{position:absolute;top:18px;right:22px;font-family:var(--ff-d);font-size:52px;font-weight:800;color:rgba(155,127,255,.07);line-height:1;user-select:none;transition:color .3s;}
+.pc:hover .pn{color:rgba(155,127,255,.13);}
+.pt{font-family:var(--ff-d);font-size:21px;font-weight:700;color:var(--text);margin-bottom:9px;line-height:1.2;}
+.pd{font-size:13px;color:var(--text-muted);line-height:1.8;margin-bottom:16px;font-weight:300;}
+.pw{margin-bottom:16px;}
+.pwi{display:flex;align-items:flex-start;gap:7px;font-size:12px;color:var(--text-mid);line-height:1.6;margin-bottom:4px;}
+.pwd{width:4px;height:4px;border-radius:50%;background:var(--orange-light);margin-top:8px;flex-shrink:0;}
+.ptags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px;}
+.ptag{font-family:var(--ff-m);font-size:10px;letter-spacing:.1em;text-transform:uppercase;padding:4px 11px;background:rgba(255,255,255,.8);border:.5px solid var(--peach-deep);border-radius:100px;color:var(--text-mid);transition:all .3s;}
+.pc:hover .ptag{border-color:rgba(155,127,255,.3);color:var(--purple-deep);}
+.pl{display:inline-flex;align-items:center;gap:6px;font-family:var(--ff-m);font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--orange);text-decoration:none;transition:all .3s;}
+.pl:hover{gap:11px;color:var(--purple);}
+#skills{background:var(--peach-mid);}
+.skl{display:grid;grid-template-columns:1fr 2fr;gap:64px;}
+.sks{position:sticky;top:110px;}
+.skc{margin-top:22px;border-radius:16px;overflow:hidden;border:1px solid var(--peach-deep);background:rgba(255,255,255,.5);}
+.skg{display:flex;flex-direction:column;}
+.skgr{border-top:.5px solid var(--peach-deep);padding:28px 0;}
+.skgr:last-child{border-bottom:.5px solid var(--peach-deep);}
+.skgt{font-family:var(--ff-m);font-size:10px;letter-spacing:.25em;text-transform:uppercase;color:var(--orange-light);margin-bottom:14px;}
+.ski{display:flex;flex-wrap:wrap;gap:8px;}
+.skp{display:flex;align-items:center;gap:7px;padding:8px 15px;background:rgba(255,255,255,.8);border:1px solid var(--peach-deep);border-radius:100px;transition:all .3s;cursor:default;}
+.skp:hover{border-color:var(--purple);background:rgba(155,127,255,.08);transform:translateY(-2px);}
+.skpd{width:5px;height:5px;border-radius:50%;flex-shrink:0;}
+.skpn{font-size:13px;color:var(--text);font-weight:400;}
+.skps{font-family:var(--ff-m);font-size:10px;color:var(--text-muted);}
+#education{background:var(--dark);}
+#education::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 20%,rgba(255,209,102,.06) 0%,transparent 50%);}
+.ei{position:relative;z-index:2;}
+.eg{display:grid;grid-template-columns:1fr 1fr;gap:52px;margin-top:52px;}
+.ebt{font-family:var(--ff-m);font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--orange-light);margin-bottom:22px;padding-bottom:12px;border-bottom:.5px solid rgba(255,255,255,.06);}
+.edc{background:rgba(255,255,255,.04);border:.5px solid rgba(255,255,255,.08);border-radius:16px;padding:24px 24px;transition:all .3s;margin-bottom:12px;}
+.edc:hover{background:rgba(155,127,255,.06);border-color:rgba(155,127,255,.2);}
+.edeg{font-family:var(--ff-d);font-size:17px;font-weight:700;color:var(--white);margin-bottom:5px;line-height:1.3;}
+.eu{font-family:var(--ff-m);font-size:11px;color:rgba(255,250,246,.4);letter-spacing:.06em;margin-bottom:3px;}
+.edt{font-family:var(--ff-m);font-size:10px;color:rgba(255,250,246,.28);letter-spacing:.06em;margin-bottom:9px;}
+.ebadge{display:inline-flex;align-items:center;gap:6px;font-family:var(--ff-m);font-size:10px;background:rgba(155,127,255,.15);color:var(--purple-light);border:.5px solid rgba(155,127,255,.3);border-radius:100px;padding:4px 12px;}
+.elangs{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px;}
+.elang{font-family:var(--ff-m);font-size:10px;padding:3px 11px;background:rgba(255,255,255,.05);border:.5px solid rgba(255,255,255,.1);border-radius:100px;color:rgba(255,250,246,.45);letter-spacing:.08em;}
+.cc{background:rgba(255,255,255,.04);border:.5px solid rgba(255,255,255,.08);border-radius:13px;padding:18px 20px;display:flex;align-items:center;gap:13px;transition:all .3s;margin-bottom:9px;}
+.cc:hover{background:rgba(255,209,102,.06);border-color:rgba(255,209,102,.2);transform:translateX(6px);}
+.ci{width:38px;height:38px;border-radius:10px;background:rgba(255,209,102,.12);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;}
+.cn{font-family:var(--ff-d);font-size:15px;font-weight:700;color:var(--white);margin-bottom:2px;}
+.ciss{font-family:var(--ff-m);font-size:11px;color:rgba(255,250,246,.3);letter-spacing:.06em;}
+#hobbies{background:var(--peach);}
+.hog{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-top:52px;}
+.hoc{border-radius:20px;padding:30px 22px;border:1px solid var(--peach-deep);background:rgba(255,255,255,.65);text-align:center;transition:all .4s;backdrop-filter:blur(8px);cursor:default;}
+.hoc:hover{transform:translateY(-8px) rotate(-1deg);box-shadow:0 20px 40px rgba(155,127,255,.12);}
+.hoe{font-size:34px;margin-bottom:12px;display:block;}
+.hon{font-family:var(--ff-d);font-size:14px;font-weight:700;color:var(--text);margin-bottom:5px;}
+.hod{font-size:12px;color:var(--text-muted);line-height:1.6;font-weight:300;}
+#contact{background:var(--dark);}
+#contact::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(155,127,255,.1) 0%,transparent 60%);}
+.ci2{position:relative;z-index:2;}
+.ch{font-family:var(--ff-d);font-size:clamp(36px,5.5vw,84px);font-weight:800;line-height:.95;letter-spacing:-.03em;text-align:center;color:var(--white);margin-bottom:13px;}
+.ch em{display:block;font-style:italic;background:linear-gradient(90deg,var(--purple),var(--pink),var(--gold),var(--pink),var(--purple));background-size:300% 100%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:gw 3s linear infinite;}
+.csub{text-align:center;font-size:15px;color:rgba(255,250,246,.4);margin-bottom:52px;font-weight:300;max-width:440px;margin-left:auto;margin-right:auto;}
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:52px;}
+.cits{display:flex;flex-direction:column;}
+.cit{display:flex;align-items:center;gap:15px;padding:17px 0;border-bottom:.5px solid rgba(255,255,255,.06);text-decoration:none;transition:all .3s;}
+.cit:first-child{border-top:.5px solid rgba(255,255,255,.06);}
+.cit:hover{padding-left:8px;}
+.cii{width:37px;height:37px;border-radius:10px;background:rgba(255,255,255,.05);border:.5px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .3s;}
+.cit:hover .cii{background:rgba(155,127,255,.15);border-color:rgba(155,127,255,.3);}
+.cii svg{width:14px;height:14px;stroke:rgba(255,250,246,.4);fill:none;transition:stroke .3s;}
+.cit:hover .cii svg{stroke:var(--purple-light);}
+.citx{font-family:var(--ff-m);font-size:12px;color:rgba(255,250,246,.4);letter-spacing:.03em;transition:color .3s;}
+.cit:hover .citx{color:rgba(255,250,246,.85);}
+.cf{display:flex;flex-direction:column;}
+.ff{background:rgba(255,255,255,.04);border:.5px solid rgba(255,255,255,.08);border-radius:12px;overflow:hidden;margin-bottom:9px;transition:border-color .3s;}
+.ff:focus-within{border-color:rgba(155,127,255,.4);background:rgba(155,127,255,.04);}
+.fl{display:block;font-family:var(--ff-m);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:rgba(155,127,255,.6);padding:12px 17px 0;}
+.fi,.ft{display:block;width:100%;background:transparent;border:none;outline:none;font-family:var(--ff-b);font-size:14px;color:rgba(255,250,246,.85);font-weight:300;padding:7px 17px 13px;resize:none;}
+.fi::placeholder,.ft::placeholder{color:rgba(255,250,246,.2);}
+.ft{min-height:105px;}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:9px;}
+.fr .ff{margin-bottom:0;}
+.fsub{width:100%;padding:15px 22px;background:linear-gradient(135deg,var(--purple),var(--pink));color:white;font-family:var(--ff-m);font-size:12px;letter-spacing:.2em;text-transform:uppercase;border:none;border-radius:12px;cursor:pointer;transition:all .3s;margin-top:11px;display:flex;align-items:center;justify-content:center;gap:8px;position:relative;overflow:hidden;}
+.fsub::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--pink),var(--gold));opacity:0;transition:opacity .4s;}
+.fsub:hover::before{opacity:1;}
+.fsub span,.fsub svg{position:relative;z-index:1;}
+.fsub svg{width:14px;height:14px;stroke:white;fill:none;}
+#dg{background:var(--peach-mid);padding:80px 60px;}
+.gb{background:rgba(255,255,255,.85);border:1px solid var(--peach-deep);border-radius:20px;padding:38px 42px;max-width:760px;margin:0 auto;}
+.gt{font-family:var(--ff-d);font-size:26px;font-weight:800;color:var(--text);margin-bottom:7px;}
+.gsub{font-size:14px;color:var(--text-muted);margin-bottom:28px;font-weight:300;}
+.gs{display:flex;gap:14px;margin-bottom:22px;align-items:flex-start;}
+.gsn{width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,var(--purple),var(--pink));color:white;font-family:var(--ff-m);font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.gst{font-family:var(--ff-d);font-size:15px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.gsd{font-size:13px;color:var(--text-muted);line-height:1.7;font-weight:300;}
+.gc{font-family:var(--ff-m);font-size:12px;background:var(--dark);color:var(--purple-light);padding:9px 14px;border-radius:8px;margin-top:7px;letter-spacing:.05em;display:block;}
+.gn{background:rgba(155,127,255,.1);border:.5px solid rgba(155,127,255,.3);border-radius:10px;padding:13px 16px;font-size:13px;color:var(--purple-deep);margin-top:20px;line-height:1.6;}
+footer{background:var(--dark-2);border-top:.5px solid rgba(255,255,255,.06);padding:22px 60px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:11px;}
+.fl2{font-family:var(--ff-m);font-size:11px;color:rgba(255,250,246,.25);letter-spacing:.1em;}
+.fl2 span{color:var(--orange-light);}
+.fr2{font-family:var(--ff-m);font-size:11px;color:rgba(255,250,246,.18);letter-spacing:.1em;}
+@media(max-width:1024px){
+  #home{grid-template-columns:1fr;padding:0 32px;}
+  .hr{display:none;}
+  .ag,.ph,.pg,.skl,.cg,.eg{grid-template-columns:1fr;}
+  .hog{grid-template-columns:1fr 1fr;}
+  .sks{position:static;}
+  nav{padding:16px 32px;}
+  nav.sc{padding:12px 32px;}
+  section,#about,#dg{padding:80px 32px;}
+  footer{padding:18px 32px;}
+  .hl{padding:110px 0 60px;}
+}
+@media(max-width:768px){
+  .nav-links{display:none;}
+  .hb{display:flex;}
+  .mob-nav{display:flex;}
+  section,#about,#dg{padding:64px 22px;}
+  footer{padding:16px 22px;}
+  .hl{padding:100px 0 52px;}
+  .hog{grid-template-columns:1fr 1fr;}
+  .fr{grid-template-columns:1fr;}
+  .pg{grid-template-columns:1fr;}
+  .gb{padding:24px 20px;}
+}
+@media(max-width:480px){
+  .hog{grid-template-columns:1fr;}
+  .h-acts{flex-direction:column;align-items:stretch;}
+  .bp,.bs{justify-content:center;}
+  #home{padding:0 18px;}
+}
+</style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div id="progress"></div>
+<div id="loader"><div class="ld-name">Manikya Pasi</div><div class="ld-bar-w"><div class="ld-bar"></div></div><div class="ld-txt">Loading Portfolio</div></div>
+<div id="pt"></div>
+
+<div class="mob-nav" id="mn">
+  <a href="#home" onclick="cmn()">Home</a>
+  <a href="#projects" onclick="cmn()">Projects</a>
+  <a href="#skills" onclick="cmn()">Skills</a>
+  <a href="#education" onclick="cmn()">Education</a>
+  <a href="#contact" onclick="cmn()">Contact</a>
+  <a href="c:\Users\manik\Downloads\new resume\universal resume\Manikya_Pasi_DataAnalyst_Resume.pdf" download class="mob-cta">Download Resume</a>
+</div>
+
+<nav id="nb">
+  <a href="#home" class="nav-logo">mp.portfolio</a>
+  <ul class="nav-links">
+    <li><a href="#home">Home</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="manikya_resume.pdf" download class="nav-cta">Resume ↓</a></li>
+  </ul>
+  <button class="hb" id="hb" onclick="tmn()" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+<section id="home">
+  <canvas id="hc"></canvas>
+  <div class="hl">
+    <div class="h-status"><div class="s-dot"></div><span class="s-txt">Open to Work · 2026</span></div>
+    <p class="h-greet">Hey there, I'm</p>
+    <h1 class="h-name">Manikya Pasi</h1>
+    <div class="h-typing"><span id="tt"></span><span class="tc"></span></div>
+    <p class="h-bio">Entry-level Data Analyst with strong skills in SQL, Excel, and Power BI. I turn raw data into dashboards and insights that drive real decisions.</p>
+    <div class="h-acts">
+      <a href="manikya_resume.pdf" download class="bp"><span>Download Resume</span><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></a>
+      <a href="#projects" class="bs">View Projects <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg></a>
+    </div>
+    <div class="h-soc">
+      <a href="https://github.com/Manikya1203" target="_blank" class="soc-a" title="GitHub"><svg viewBox="0 0 24 24" style="fill:currentColor;stroke:none;width:14px;height:14px;"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/></svg></a>
+      <a href="https://www.linkedin.com/in/manikya-pasi" target="_blank" class="soc-a" title="LinkedIn"><svg viewBox="0 0 24 24" stroke-width="1.5" fill="none" stroke="currentColor" style="width:14px;height:14px;"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+      <a href="mailto:manikyapasi16@gmail.com" class="soc-a" title="Email"><svg viewBox="0 0 24 24" stroke-width="1.5" fill="none" stroke="currentColor" style="width:14px;height:14px;"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></a>
+      <a href="tel:+919900445380" class="soc-a" title="Phone"><svg viewBox="0 0 24 24" stroke-width="1.5" fill="none" stroke="currentColor" style="width:14px;height:14px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></a>
+    </div>
+    <div class="h-stats">
+      <div class="stat"><div class="sn">3</div><div class="sl">Projects</div></div>
+      <div class="stat"><div class="sn">2</div><div class="sl">Certifications</div></div>
+      <div class="stat"><div class="sn">5+</div><div class="sl">Skills</div></div>
+    </div>
+  </div>
+  <div class="hr">
+    <canvas id="sc" width="400" height="400"></canvas>
+    <div class="fb">Power BI</div>
+    <div class="fb">SQL · MySQL</div>
+    <div class="fb">Data Analyst</div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="ag">
+    <div class="rv">
+      <div class="ah">Turning Data<br>Into <em>Stories</em></div>
+      <p class="ab-bio">I'm Manikya Pasi, a 2025 Mechanical Engineering graduate from KLE Technological University with a deep passion for data analytics. I bridge the gap between raw numbers and meaningful business decisions using SQL, Power BI, and Excel — fluent in English, Kannada, Hindi, Marathi, and Telugu.</p>
+    </div>
+    <div class="ac-list rv rd2">
+      <div class="ac"><div class="ac-ic" style="background:rgba(155,127,255,.15)">📊</div><div><div class="ac-t">Dashboard Design</div><div class="ac-d">Interactive Power BI dashboards that make KPIs impossible to ignore</div></div></div>
+      <div class="ac"><div class="ac-ic" style="background:rgba(255,110,199,.15)">🔍</div><div><div class="ac-t">SQL Analysis</div><div class="ac-d">Complex queries extracting revenue, customer behaviour and city-wise trends</div></div></div>
+      <div class="ac"><div class="ac-ic" style="background:rgba(255,209,102,.15)">📈</div><div><div class="ac-t">Excel Mastery</div><div class="ac-d">Pivot tables, VLOOKUP, XLOOKUP — data cleaning and analysis at speed</div></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="projects">
+  <div class="ph">
+    <div class="rv"><div class="ey"><span class="en">01</span><div class="el"></div><span class="et">My Work</span></div><h2 class="sh">Featured<br><em>Projects</em></h2></div>
+    <p class="ss rv rd2">Real-world data projects — from interactive Power BI dashboards to deep SQL revenue analysis.</p>
+  </div>
+  <div class="pg">
+    <div class="pc rv">
+      <div class="pb"><div style="width:5px;height:5px;border-radius:50%;background:var(--purple)"></div>Featured</div>
+      <div class="pn">01</div>
+      <h3 class="pt">E-Commerce Sales Dashboard</h3>
+      <p class="pd">Interactive Power BI dashboard analyzing e-commerce sales performance and business KPIs with rich visual storytelling.</p>
+      <div class="pw">
+        <div class="pwi"><div class="pwd"></div><span>Built visualizations for revenue trends, product categories & return rates</span></div>
+        <div class="pwi"><div class="pwd"></div><span>Implemented KPI metrics to track sales performance & customer segments</span></div>
+        <div class="pwi"><div class="pwd"></div><span>Identified technology category as highest revenue generator</span></div>
+      </div>
+      <div class="ptags"><span class="ptag">Power BI</span><span class="ptag">Excel</span><span class="ptag">DAX</span><span class="ptag">Data Viz</span></div>
+      <a href="https://github.com/Manikya1203/Sales-Dashboard" target="_blank" class="pl">View on GitHub <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+    </div>
+    <div class="pc rv rd2">
+      <div class="pn">02</div>
+      <h3 class="pt">E-Commerce Sales Analysis</h3>
+      <p class="pd">Deep SQL analysis on a retail dataset extracting actionable insights about revenue, customers, and geographic distribution.</p>
+      <div class="pw">
+        <div class="pwi"><div class="pwd"></div><span>Used JOIN, GROUP BY & aggregate functions on large datasets</span></div>
+        <div class="pwi"><div class="pwd"></div><span>Calculated revenue, average order value & cancellation rate</span></div>
+        <div class="pwi"><div class="pwd"></div><span>Identified city-wise revenue & inactive customers</span></div>
+      </div>
+      <div class="ptags"><span class="ptag">SQL</span><span class="ptag">MySQL</span><span class="ptag">Data Analysis</span><span class="ptag">Insights</span></div>
+      <a href="https://github.com/Manikya1203/E-Commerce-Sales-Analysis-SQL-Project" target="_blank" class="pl">View on GitHub <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+    </div>
+    <div class="pc rv rd3" style="grid-column:1/-1">
+      <div class="pn">03</div>
+      <h3 class="pt">Food Delivery Performance Dashboard</h3>
+      <p class="pd">Performance analytics dashboard for a food delivery platform — tracking delivery metrics, restaurant performance, and customer satisfaction trends.</p>
+      <div class="pw">
+        <div class="pwi"><div class="pwd"></div><span>Built interactive dashboards for delivery time and order volume analysis</span></div>
+        <div class="pwi"><div class="pwd"></div><span>Tracked restaurant performance metrics and customer ratings over time</span></div>
+      </div>
+      <div class="ptags"><span class="ptag">Power BI</span><span class="ptag">Data Analysis</span><span class="ptag">Dashboard</span><span class="ptag">KPIs</span></div>
+      <a href="https://github.com/Manikya1203/Food-Delivery-Performance-Dashboard" target="_blank" class="pl">View on GitHub <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg></a>
+      </div>
+</section>
+
+<section id="skills">
+  <div class="skl">
+    <div class="sks rv">
+      <div class="ey"><span class="en">02</span><div class="el"></div><span class="et">Expertise</span></div>
+      <h2 class="sh">Skills &<br><em>Tools</em></h2>
+      <p class="ss" style="margin-top:12px">Every tool battle-tested on real projects.</p>
+      <div class="skc"><canvas id="bc" width="300" height="250"></canvas></div>
+    </div>
+    <div class="skg rv rd2">
+      <div class="skgr"><div class="skgt">Data Analysis</div><div class="ski">
+        <div class="skp"><div class="skpd" style="background:#9B7FFF"></div><span class="skpn">SQL</span><span class="skps">MySQL</span></div>
+        <div class="skp"><div class="skpd" style="background:#FF6EC7"></div><span class="skpn">Microsoft Excel</span></div>
+        <div class="skp"><div class="skpd" style="background:#FFD166"></div><span class="skpn">Data Cleaning</span></div>
+        <div class="skp"><div class="skpd" style="background:#E8653A"></div><span class="skpn">Data Analysis</span></div>
+      </div></div>
+      <div class="skgr"><div class="skgt">Data Visualization</div><div class="ski">
+        <div class="skp"><div class="skpd" style="background:#9B7FFF"></div><span class="skpn">Power BI</span></div>
+        <div class="skp"><div class="skpd" style="background:#FF6EC7"></div><span class="skpn">Dashboard Development</span></div>
+        <div class="skp"><div class="skpd" style="background:#FFD166"></div><span class="skpn">Basic DAX</span></div>
+      </div></div>
+      <div class="skgr"><div class="skgt">Excel Functions</div><div class="ski">
+        <div class="skp"><div class="skpd" style="background:#9B7FFF"></div><span class="skpn">Pivot Tables</span></div>
+        <div class="skp"><div class="skpd" style="background:#FF6EC7"></div><span class="skpn">VLOOKUP</span></div>
+        <div class="skp"><div class="skpd" style="background:#FFD166"></div><span class="skpn">XLOOKUP</span></div>
+      </div></div>
+      <div class="skgr"><div class="skgt">Tools & Soft Skills</div><div class="ski">
+        <div class="skp"><div class="skpd" style="background:#9B7FFF"></div><span class="skpn">GitHub</span></div>
+        <div class="skp"><div class="skpd" style="background:#FF6EC7"></div><span class="skpn">PowerPoint</span></div>
+        <div class="skp"><div class="skpd" style="background:#FFD166"></div><span class="skpn">Analytical Thinking</span></div>
+        <div class="skp"><div class="skpd" style="background:#E8653A"></div><span class="skpn">Problem Solving</span></div>
+        <div class="skp"><div class="skpd" style="background:#9B7FFF"></div><span class="skpn">Communication</span></div>
+        <div class="skp"><div class="skpd" style="background:#FF6EC7"></div><span class="skpn">Attention to Detail</span></div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<section id="education">
+  <div class="ei">
+    <div class="rv">
+      <div class="ey"><span class="en" style="color:rgba(255,209,102,.6)">03</span><div class="el" style="background:rgba(255,255,255,.1)"></div><span class="et" style="color:rgba(255,250,246,.3)">Background</span></div>
+      <h2 class="sh" style="color:var(--white)">Education &<br><em>Certifications</em></h2>
+    </div>
+    <div class="eg">
+      <div class="rv rd1">
+        <div class="ebt">Education</div>
+        <div class="edc">
+          <div class="edeg">Bachelor of Engineering<br>Mechanical Engineering</div>
+          <div class="eu">KLE Technological University · Hubballi, Karnataka</div>
+          <div class="edt">Nov 2022 – Aug 2025</div>
+          <div class="ebadge">🎓 Class of 2025</div>
+          <div class="elangs"><span class="elang">English</span><span class="elang">Kannada</span><span class="elang">Hindi</span><span class="elang">Marathi</span><span class="elang">Telugu</span></div>
+        </div>
+      </div>
+      <div class="rv rd2">
+        <div class="ebt">Certifications</div>
+        <div class="cc"><div class="ci">🗃️</div><div><div class="cn">SQL Certification</div><div class="ciss">OneRoadmap</div></div></div>
+        <div class="cc"><div class="ci">📊</div><div><div class="cn">Microsoft Excel Certification</div><div class="ciss">OneRoadmap</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="hobbies">
+  <div class="rv"><div class="ey"><span class="en">04</span><div class="el"></div><span class="et">Beyond Work</span></div><h2 class="sh">Hobbies &<br><em>Interests</em></h2></div>
+  <div class="hog">
+    <div class="hoc rv rd1"><span class="hoe">📊</span><div class="hon">Dashboard Design</div><div class="hod">Building beautiful, insightful visualizations just for fun.</div></div>
+    <div class="hoc rv rd2"><span class="hoe">📰</span><div class="hon">Market Trends</div><div class="hod">Exploring business news, market movements and economic patterns.</div></div>
+    <div class="hoc rv rd3"><span class="hoe">🛠️</span><div class="hon">Learning New Tools</div><div class="hod">Always experimenting with new data tools and analytics tech.</div></div>
+    <div class="hoc rv rd4"><span class="hoe">🏃</span><div class="hon">Fitness & Outdoors</div><div class="hod">Staying active, outdoor adventures, keeping the mind sharp.</div></div>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="ci2">
+    <div class="rv"><h2 class="ch">Let's Work<br><em>Together</em></h2><p class="csub">Actively looking for Data Analyst roles. Let's connect!</p></div>
+    <div class="cg">
+      <div class="cits rv">
+        <a href="mailto:manikyapasi16@gmail.com" class="cit"><div class="cii"><svg viewBox="0 0 24 24" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg></div><span class="citx">manikyapasi16@gmail.com</span></a>
+        <a href="tel:+919900445380" class="cit"><div class="cii"><svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.18 2 2 0 0 1 3.6 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.56a16 16 0 0 0 6 6l.92-.92a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg></div><span class="citx">+91 9900445380</span></a>
+        <a href="https://www.linkedin.com/in/manikya-pasi" target="_blank" class="cit"><div class="cii"><svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></div><span class="citx">linkedin.com/in/manikya-pasi</span></a>
+        <a href="https://github.com/Manikya1203" target="_blank" class="cit"><div class="cii"><svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M15 22v-4a4.8 4.8 0 0 0-1-3.5c3 0 6-2 6-5.5.08-1.25-.27-2.48-1-3.5.28-1.15.28-2.35 0-3.5 0 0-1 0-3 1.5-2.64-.5-5.36-.5-8 0C6 2 5 2 5 2c-.3 1.15-.3 2.35 0 3.5A5.403 5.403 0 0 0 4 9c0 3.5 3 5.5 6 5.5-.39.49-.68 1.05-.85 1.65-.17.6-.22 1.23-.15 1.85v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg></div><span class="citx">github.com/Manikya1203</span></a>
+        <div class="cit" style="cursor:default"><div class="cii"><svg viewBox="0 0 24 24" stroke-width="1.5"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></div><span class="citx">Dharwad, Karnataka, India</span></div>
+      </div>
+      <div class="cf rv rd2">
+        <div class="fr"><div class="ff"><label class="fl">Name</label><input class="fi" type="text" placeholder="Your name"></div><div class="ff"><label class="fl">Email</label><input class="fi" type="email" placeholder="your@email.com"></div></div>
+        <div class="ff"><label class="fl">Subject</label><input class="fi" type="text" placeholder="Job Opportunity / Collaboration"></div>
+        <div class="ff"><label class="fl">Message</label><textarea class="ft" placeholder="Tell me about the role or project..."></textarea></div>
+        <button class="fsub" onclick="hs(this)"><span>Send Message</span><svg viewBox="0 0 24 24" stroke-width="1.5"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- <section id="dg">
+  <div class="gb rv">
+    <div class="gt">🚀 Deploy on GitHub Pages — Free & Forever</div>
+    <div class="gsub">Go live in under 5 minutes. No cost, no server, just your portfolio on the internet.</div>
+    <div class="gs"><div class="gsn">1</div><div><div class="gst">Create a GitHub repo</div><div class="gsd">Go to github.com → New repository → Name it exactly:</div><code class="gc">Manikya1203.github.io</code><div class="gsd" style="margin-top:6px">Set it to Public → Create repository.</div></div></div>
+    <div class="gs"><div class="gsn">2</div><div><div class="gst">Upload both files</div><div class="gsd">Drag and drop into the repo. Then rename the HTML file:</div><code class="gc">manikya-portfolio.html  →  index.html</code><div class="gsd" style="margin-top:6px">Also upload: manikya_resume.pdf (keep this exact filename)</div></div></div>
+    <div class="gs"><div class="gsn">3</div><div><div class="gst">Enable GitHub Pages</div><div class="gsd">Repo Settings → Pages → Source: Deploy from branch → Branch: main → Folder: / (root) → Save.</div></div></div>
+    <div class="gs"><div class="gsn">4</div><div><div class="gst">Your portfolio is live! 🎉</div><div class="gsd">Wait 1–2 minutes, then open:</div><code class="gc">https://Manikya1203.github.io</code></div></div>
+    <div class="gn">💡 To update later — just re-upload the files to the same repo. GitHub Pages redeploys automatically within minutes.</div>
+  </div>
+</section> -->
+
+<footer>
+  <div class="fl2">&copy; 2025 <span>Manikya Pasi</span> · Data Analyst · Dharwad, Karnataka</div>
+  <div class="fr2">KLE Technological University · Class of 2025</div>
+</footer>
+
+<script>
+window.addEventListener('load',()=>setTimeout(()=>document.getElementById('loader').classList.add('hidden'),2000));
+const cur=document.getElementById('cursor'),ring=document.getElementById('cursorRing');
+let mx=0,my=0,rx=0,ry=0;
+if(window.matchMedia('(hover:hover)').matches){
+  document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+  (function ar(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(ar);})();
+}
+window.addEventListener('scroll',()=>{
+  const s=document.documentElement.scrollTop,h=document.documentElement.scrollHeight-window.innerHeight;
+  document.getElementById('progress').style.width=Math.round(s/h*100)+'%';
+  document.getElementById('nb').classList.toggle('sc',s>60);
+});
+function tmn(){const n=document.getElementById('mn'),b=document.getElementById('hb');const o=n.classList.toggle('op');b.classList.toggle('op',o);document.body.style.overflow=o?'hidden':'';}
+function cmn(){document.getElementById('mn').classList.remove('op');document.getElementById('hb').classList.remove('op');document.body.style.overflow='';}
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    const t=document.querySelector(a.getAttribute('href'));
+    if(!t)return;e.preventDefault();cmn();
+    const ov=document.getElementById('pt');
+    ov.classList.add('on');
+    setTimeout(()=>{t.scrollIntoView({behavior:'instant'});setTimeout(()=>ov.classList.remove('on'),200);},320);
+  });
+});
+document.querySelectorAll('.rv').forEach(el=>new IntersectionObserver(([e])=>{if(e.isIntersecting)el.classList.add('vis');},{threshold:.07}).observe(el));
+(function(){
+  const ph=['Data Analyst','SQL · MySQL Expert','Power BI Developer','Dashboard Designer','Open to Work · 2026','Turning Data into Insights'];
+  let pi=0,ci=0,del=false;const el=document.getElementById('tt');
+  function go(){const w=ph[pi];if(!del){el.textContent=w.slice(0,ci+1);ci++;if(ci===w.length){del=true;setTimeout(go,1600);return;}}else{el.textContent=w.slice(0,ci-1);ci--;if(ci===0){del=false;pi=(pi+1)%ph.length;setTimeout(go,380);return;}}setTimeout(go,del?55:105);}go();
+})();
+(function(){
+  const cv=document.getElementById('hc'),ctx=cv.getContext('2d');
+  function rs(){cv.width=cv.offsetWidth;cv.height=cv.offsetHeight;}rs();window.addEventListener('resize',rs);
+  const pts=[];for(let i=0;i<50;i++)pts.push({x:Math.random()*cv.width,y:Math.random()*cv.height,vx:(Math.random()-.5)*.22,vy:(Math.random()-.5)*.22,r:1+Math.random()*1.8,hue:Math.random()>.5?270+Math.random()*40:20+Math.random()*20,a:.12+Math.random()*.28});
+  (function d(){ctx.clearRect(0,0,cv.width,cv.height);pts.forEach(p=>{p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>cv.width)p.vx*=-1;if(p.y<0||p.y>cv.height)p.vy*=-1;ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`hsla(${p.hue},70%,65%,${p.a})`;ctx.fill();});pts.forEach((a,i)=>pts.slice(i+1).forEach(b=>{const d=Math.hypot(a.x-b.x,a.y-b.y);if(d<100){ctx.beginPath();ctx.moveTo(a.x,a.y);ctx.lineTo(b.x,b.y);ctx.strokeStyle=`rgba(155,127,255,${.04*(1-d/100)})`;ctx.lineWidth=.5;ctx.stroke();}}));requestAnimationFrame(d);})();
+})();
+(function(){
+  const cv=document.getElementById('sc'),ctx=cv.getContext('2d'),W=400,H=400,CX=200,CY=200,R=125;
+  let rX=.3,rY=0,drag=false,lx=0,ly=0,vx=0,vy=0;
+  const pts=[];for(let i=0;i<300;i++){const th=Math.acos(1-2*Math.random()),ph=Math.random()*Math.PI*2;pts.push({x:Math.sin(th)*Math.cos(ph),y:Math.sin(th)*Math.sin(ph),z:Math.cos(th),hue:270+Math.random()*80,sz:1.1+Math.random()*1.9});}
+  cv.addEventListener('mousedown',e=>{drag=true;lx=e.clientX;ly=e.clientY;vx=0;vy=0;});
+  cv.addEventListener('touchstart',e=>{drag=true;lx=e.touches[0].clientX;ly=e.touches[0].clientY;},{passive:true});
+  window.addEventListener('mouseup',()=>drag=false);window.addEventListener('touchend',()=>drag=false);
+  window.addEventListener('mousemove',e=>{if(!drag)return;vy=(e.clientX-lx)*.008;vx=(e.clientY-ly)*.008;rY+=vy;rX+=vx;lx=e.clientX;ly=e.clientY;});
+  window.addEventListener('touchmove',e=>{if(!drag)return;vy=(e.touches[0].clientX-lx)*.008;vx=(e.touches[0].clientY-ly)*.008;rY+=vy;rX+=vx;lx=e.touches[0].clientX;ly=e.touches[0].clientY;},{passive:true});
+  function r3(x,y,z){let y2=y*Math.cos(rX)-z*Math.sin(rX),z2=y*Math.sin(rX)+z*Math.cos(rX),x2=x*Math.cos(rY)+z2*Math.sin(rY),z3=-x*Math.sin(rY)+z2*Math.cos(rY);return[x2,y2,z3];}
+  (function d(){ctx.clearRect(0,0,W,H);if(!drag){vx*=.95;vy*=.95;rY+=.005+vy;rX+=vx;}
+  [...pts].map(p=>{const[a,b,c]=r3(p.x,p.y,p.z);return{...p,rx:a,ry:b,rz:c};}).sort((a,b)=>a.rz-b.rz).forEach(p=>{const sc=1/(1-p.rz*.3),px=CX+p.rx*R*sc,py=CY+p.ry*R*sc*.85,al=.2+((p.rz+1)/2)*.75;ctx.beginPath();ctx.arc(px,py,p.sz*sc,0,Math.PI*2);ctx.fillStyle=`hsla(${p.hue},80%,70%,${al})`;ctx.fill();});
+  const g=ctx.createRadialGradient(CX,CY,0,CX,CY,60);g.addColorStop(0,'rgba(155,127,255,.2)');g.addColorStop(.5,'rgba(255,110,199,.07)');g.addColorStop(1,'transparent');ctx.beginPath();ctx.arc(CX,CY,60,0,Math.PI*2);ctx.fillStyle=g;ctx.fill();
+  ctx.font='300 42px Syne,sans-serif';ctx.fillStyle='rgba(155,127,255,.48)';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('MP',CX,CY);requestAnimationFrame(d);})();
+})();
+(function(){
+  const cv=document.getElementById('bc'),ctx=cv.getContext('2d');cv.width=300;cv.height=250;
+  const sk=[{l:'SQL',v:88,h:270},{l:'Power BI',v:82,h:300},{l:'Excel',v:90,h:330},{l:'DAX',v:70,h:255},{l:'Analysis',v:85,h:285}];
+  let t=0;const bW=28,gap=16,dep=8,sX=24,bY=205;
+  (function d(){ctx.clearRect(0,0,300,250);ctx.fillStyle='rgba(255,224,200,.4)';ctx.fillRect(0,0,300,250);
+  for(let i=0;i<=4;i++){const y=bY-(i/4)*150;ctx.beginPath();ctx.moveTo(16,y);ctx.lineTo(288,y);ctx.strokeStyle='rgba(200,160,140,.2)';ctx.lineWidth=.5;ctx.stroke();ctx.fillStyle='rgba(160,112,96,.4)';ctx.font='8px DM Mono,monospace';ctx.textAlign='right';ctx.fillText((i*25)+'%',14,y+3);}
+  sk.forEach((s,i)=>{const x=sX+i*(bW+gap),w=Math.sin(t*1.5+i*.8)*2,bh=(s.v+w)/100*150,top=bY-bh;
+  ctx.beginPath();ctx.moveTo(x+bW,top);ctx.lineTo(x+bW+dep,top-dep*.5);ctx.lineTo(x+bW+dep,bY-dep*.5);ctx.lineTo(x+bW,bY);ctx.fillStyle=`hsla(${s.h},55%,60%,.5)`;ctx.fill();
+  ctx.beginPath();ctx.moveTo(x,top);ctx.lineTo(x+bW,top);ctx.lineTo(x+bW+dep,top-dep*.5);ctx.lineTo(x+dep,top-dep*.5);ctx.fillStyle=`hsla(${s.h},70%,82%,.9)`;ctx.fill();
+  const gr=ctx.createLinearGradient(x,top,x,bY);gr.addColorStop(0,`hsla(${s.h},80%,68%,.95)`);gr.addColorStop(1,`hsla(${s.h},60%,50%,.85)`);ctx.beginPath();ctx.rect(x,top,bW,bh);ctx.fillStyle=gr;ctx.fill();
+  ctx.textAlign='center';ctx.fillStyle=`hsla(${s.h},50%,35%,.8)`;ctx.font='bold 8px DM Mono,monospace';ctx.fillText(s.l,x+bW/2,bY+13);
+  ctx.fillStyle=`hsla(${s.h},70%,38%,.85)`;ctx.font='bold 9px DM Mono,monospace';ctx.fillText(Math.round(s.v)+'%',x+bW/2,top-6);});
+  t+=.018;requestAnimationFrame(d);})();
+})();
+function hs(btn){const o=btn.innerHTML;btn.innerHTML='<span>Message Sent ✓</span>';btn.style.background='linear-gradient(135deg,#22C55E,#16A34A)';setTimeout(()=>{btn.innerHTML=o;btn.style.background='';},3500);}
+</script>
+</body>
+</html>
